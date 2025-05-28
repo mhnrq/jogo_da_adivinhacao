@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jogo da Adivinhação</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
 
     body {
       margin: 0;
@@ -24,8 +21,7 @@
       align-items: center;
     }
 
-    .cartaz {
-      background: #e0f7fa;
+    .cartaz, .cartaoHistorico {
       border-radius: 10px;
       padding: 1rem;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
@@ -37,7 +33,7 @@
       transition: all 0.3s ease-in-out;
     }
 
-    .cartaz span {
+    .cartaz span, .cartaoHistorico span {
       background: white;
       border-radius: 6px;
       padding: 10px;
@@ -49,7 +45,6 @@
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
-      transition: all 0.3s ease;
     }
 
     .acoes button {
@@ -59,7 +54,6 @@
       color: white;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.2s ease;
     }
 
     .sim { background-color: #4CAF50; }
@@ -84,9 +78,7 @@
       min-width: 200px;
     }
 
-    .oculto {
-      display: none;
-    }
+    .oculto { display: none; }
 
     #novoJogo {
       margin-top: 2rem;
@@ -124,6 +116,11 @@
       padding: 0 5px;
       border-radius: 4px;
     }
+
+    .nome-cartao {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -154,6 +151,9 @@
 
   <script>
     const cartazes = [];
+    const nomesCartoes = ['Azul', 'Vermelho', 'Verde', 'Amarelo', 'Roxo', 'Laranja'];
+    const coresCartoes = ['#bbdefb', '#ffcdd2', '#c8e6c9', '#fff9c4', '#e1bee7', '#ffe0b2'];
+
     let numeroEscolhido = 0;
     let respostas = [];
     let indiceAtual = 0;
@@ -187,15 +187,26 @@
         calcularNumero();
         return;
       }
-
       const div = document.getElementById('cartazAtual');
+      div.style.backgroundColor = coresCartoes[indiceAtual];
       div.innerHTML = cartazes[indiceAtual].map(n => `<span>${n}</span>`).join('');
     }
 
     function responder(temNumero) {
       respostas[indiceAtual] = temNumero;
-      const destino = temNumero ? 'sim' : 'nao';
-      document.getElementById(destino).innerHTML += `<p>Cartaz ${indiceAtual + 1}</p>`;
+      const destinoId = temNumero ? 'sim' : 'nao';
+      const destino = document.getElementById(destinoId);
+      const nomeCartao = nomesCartoes[indiceAtual];
+      const corCartao = coresCartoes[indiceAtual];
+      const numeros = cartazes[indiceAtual];
+
+      const div = document.createElement('div');
+      div.className = 'cartaoHistorico';
+      div.style.backgroundColor = corCartao;
+      div.innerHTML = `<div class="nome-cartao">Cartão ${nomeCartao}</div>` +
+        numeros.map(n => `<span>${n}</span>`).join('');
+
+      destino.appendChild(div);
       indiceAtual++;
       mostrarCartaz();
     }
@@ -221,10 +232,10 @@
       let explicacao = '';
       for (let i = 0; i < 6; i++) {
         if ((numero >> i) & 1) {
-          explicacao += `O número ${numero} estava no Cartaz ${i + 1}.\n`;
+          explicacao += `O número ${numero} estava no Cartão ${nomesCartoes[i]}.\n`;
         }
       }
-      msg.textContent = explicacao || 'Não foi possível localizar esse número em nenhum cartaz.';
+      msg.textContent = explicacao || 'Esse número não apareceu em nenhum cartão.';
     }
 
     iniciarJogo();
