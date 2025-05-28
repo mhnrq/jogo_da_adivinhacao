@@ -267,13 +267,18 @@
         return;
       }
 
-let explicacao = '';
+let cartoesEncontrados = [];
 for (let i = 0; i < 6; i++) {
   if ((numero >> i) & 1) {
-    explicacao += `O número ${numero} estava no Cartão ${nomesCartoes[i]}.<br>`;
+    cartoesEncontrados.push(nomesCartoes[i]);
   }
 }
-msg.innerHTML = explicacao || 'Esse número não apareceu em nenhum cartão.';
+
+if (cartoesEncontrados.length > 0) {
+  msg.innerHTML = `O número ${numero} estava nos cartões: ${cartoesEncontrados.join(', ')}.`;
+} else {
+  msg.innerHTML = 'Esse número não apareceu em nenhum cartão.';
+}
 }
 
     iniciarJogo();
