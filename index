@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jogo da Adivinhação</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f0f0f0;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .cartaz {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .numeros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .numeros span {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      background: #eee;
+    }
+    .acoes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    .acoes button {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1.2rem;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      margin: 0 5px;
+    }
+    .sim {
+      background-color: #4CAF50;
+    }
+    .nao {
+      background-color: #f44336;
+    }
+    .grupos {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 1rem;
+    }
+    .grupo {
+      flex: 1;
+      padding: 1rem;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .oculto {
+      display: none;
+    }
+    #novoJogo {
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 1.2rem;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    #feedbackSection {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 8px;
+    }
+    #mensagemFeedback {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="cartazAtual" class="cartaz"></div>
+    <div class="acoes">
+      <button class="sim" onclick="responder(true)">✔</button>
+      <button class="nao" onclick="responder(false)">✖</button>
+    </div>
+    <div class="grupos">
+      <div class="grupo" id="grupoSim"><strong>Número estava:</strong><div id="sim"></div></div>
+      <div class="grupo" id="grupoNao"><strong>Número não estava:</strong><div id="nao"></div></div>
+    </div>
+    <button id="novoJogo" class="oculto" onclick="iniciarJogo()">Novo Jogo</button>
+    <div id="resultado"></div>
+    <div id="feedbackSection" class="oculto">
+      <p>Se você acha que houve um erro, digite o número que escolheu:</p>
+      <input type="number" min="1" max="59" id="feedbackInput">
+      <button onclick="verificarFeedback()">Verificar</button>
+      <div id="mensagemFeedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const cartazes = [];
+    let numeroEscolhido = 0;
+    let respostas = [];
+    let indiceAtual = 0;
+
+    function gerarCartazes() {
+      cartazes.length = 0;
+      for (let i = 0; i < 6; i++) {
+        let cartaz = [];
+        for (let j = 1; j <= 59; j++) {
+          if ((j >> i) & 1) cartaz.push(j);
+        }
+        cartazes.push(cartaz);
+      }
+    }
+
+    function iniciarJogo() {
+      numeroEscolhido = 0;
+      respostas = [];
+      indiceAtual = 0;
+      document.getElementById('sim').innerHTML = '';
+      document.getElementById('nao').innerHTML = '';
+      document.getElementById('resultado').innerHTML = '';
+      document.getElementById('feedbackSection').classList.add('oculto');
+      document.getElementById('novoJogo').classList.add('oculto');
+      gerarCartazes();
+      mostrarCartaz();
+    }
+
+    function mostrarCartaz() {
+      if (indiceAtual >= cartazes.length) {
+        calcularNumero();
+        return;
+      }
+
+      const div = document.getElementById('cartazAtual');
+      div.innerHTML = `<h3>Cartaz ${indiceAtual + 1}</h3><div class="numeros">${cartazes[indiceAtual].map(n => `<span>${n}</span>`).join('')}</div>`;
+    }
+
+    function responder(temNumero) {
+      respostas[indiceAtual] = temNumero;
+      const destino = temNumero ? 'sim' : 'nao';
+      document.getElementById(destino).innerHTML += `<p>Cartaz ${indiceAtual + 1}</p>`;
+      indiceAtual++;
+      mostrarCartaz();
+    }
+
+    function calcularNumero() {
+      for (let i = 0; i < respostas.length; i++) {
+        if (respostas[i]) numeroEscolhido += 1 << i;
+      }
+      document.getElementById('resultado').innerHTML = `<h2>Seu número é <mark>${numeroEscolhido}</mark>!</h2>`;
+      document.getElementById('novoJogo').classList.remove('oculto');
+      document.getElementById('feedbackSection').classList.remove('oculto');
+    }
+
+    function verificarFeedback() {
+      const numero = parseInt(document.getElementById('feedbackInput').value);
+      if (isNaN(numero) || numero < 1 || numero > 59) {
+        document.getElementById('mensagemFeedback').textContent = 'Por favor, digite um número válido entre 1 e 59.';
+        return;
+      }
+
+      let explicacao = '';
+      for (let i = 0; i < 6; i++) {
+        if ((numero >> i) & 1) {
+          explicacao += `O número ${numero} estava no Cartaz ${i + 1}.\n`;
+        }
+      }
+      document.getElementById('mensagemFeedback').textContent = explicacao || 'Não foi possível localizar esse número em nenhum cartaz.';
+    }
+
+    iniciarJogo();
+  </script>
+</body>
+</html>
