@@ -9,109 +9,141 @@
       box-sizing: border-box;
       font-family: Arial, sans-serif;
     }
+
     body {
       margin: 0;
       padding: 20px;
-      background: #f0f0f0;
+      background: #f9f9f9;
       color: #333;
     }
+
     .container {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-    }
-    .cartaz {
-      background: white;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .numeros {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    .numeros span {
-      width: 40px;
-      height: 40px;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      background: #eee;
     }
+
+    .cartaz {
+      background: #e0f7fa;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.6rem;
+      max-width: 400px;
+      width: 100%;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .cartaz span {
+      background: white;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+
     .acoes {
       display: flex;
-      justify-content: space-between;
+      gap: 1rem;
       margin-top: 1rem;
+      transition: all 0.3s ease;
     }
+
     .acoes button {
-      flex: 1;
-      padding: 1rem;
-      font-size: 1.2rem;
+      padding: 1rem 2rem;
+      font-size: 1.4rem;
       border: none;
       color: white;
       border-radius: 8px;
-      margin: 0 5px;
+      cursor: pointer;
+      transition: background 0.2s ease;
     }
-    .sim {
-      background-color: #4CAF50;
-    }
-    .nao {
-      background-color: #f44336;
-    }
+
+    .sim { background-color: #4CAF50; }
+    .nao { background-color: #f44336; }
+
     .grupos {
       display: flex;
       flex-direction: row;
-      justify-content: space-around;
+      justify-content: center;
       gap: 1rem;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 600px;
     }
+
     .grupo {
       flex: 1;
       padding: 1rem;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      min-width: 200px;
     }
+
     .oculto {
       display: none;
     }
+
     #novoJogo {
       margin-top: 2rem;
-      padding: 1rem;
+      padding: 1rem 2rem;
       font-size: 1.2rem;
       background: #2196f3;
       color: white;
       border: none;
       border-radius: 8px;
+      cursor: pointer;
     }
+
     #feedbackSection {
       margin-top: 2rem;
       padding: 1rem;
       background-color: #fff3cd;
       border: 1px solid #ffeeba;
       border-radius: 8px;
+      max-width: 500px;
+      width: 100%;
     }
+
     #mensagemFeedback {
       margin-top: 1rem;
       font-weight: bold;
+    }
+
+    #resultado {
+      margin-top: 1.5rem;
+      font-size: 1.4rem;
+    }
+
+    mark {
+      background: #ffff8d;
+      padding: 0 5px;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="cartazAtual" class="cartaz"></div>
-    <div class="acoes">
+
+    <div class="acoes" id="botoesAcoes">
       <button class="sim" onclick="responder(true)">✔</button>
       <button class="nao" onclick="responder(false)">✖</button>
     </div>
+
     <div class="grupos">
       <div class="grupo" id="grupoSim"><strong>Número estava:</strong><div id="sim"></div></div>
       <div class="grupo" id="grupoNao"><strong>Número não estava:</strong><div id="nao"></div></div>
     </div>
+
     <button id="novoJogo" class="oculto" onclick="iniciarJogo()">Novo Jogo</button>
+
     <div id="resultado"></div>
+
     <div id="feedbackSection" class="oculto">
       <p>Se você acha que houve um erro, digite o número que escolheu:</p>
       <input type="number" min="1" max="59" id="feedbackInput">
@@ -157,7 +189,7 @@
       }
 
       const div = document.getElementById('cartazAtual');
-      div.innerHTML = `<h3>Cartaz ${indiceAtual + 1}</h3><div class="numeros">${cartazes[indiceAtual].map(n => `<span>${n}</span>`).join('')}</div>`;
+      div.innerHTML = cartazes[indiceAtual].map(n => `<span>${n}</span>`).join('');
     }
 
     function responder(temNumero) {
@@ -179,8 +211,10 @@
 
     function verificarFeedback() {
       const numero = parseInt(document.getElementById('feedbackInput').value);
+      const msg = document.getElementById('mensagemFeedback');
+
       if (isNaN(numero) || numero < 1 || numero > 59) {
-        document.getElementById('mensagemFeedback').textContent = 'Por favor, digite um número válido entre 1 e 59.';
+        msg.textContent = 'Por favor, digite um número válido entre 1 e 59.';
         return;
       }
 
@@ -190,7 +224,7 @@
           explicacao += `O número ${numero} estava no Cartaz ${i + 1}.\n`;
         }
       }
-      document.getElementById('mensagemFeedback').textContent = explicacao || 'Não foi possível localizar esse número em nenhum cartaz.';
+      msg.textContent = explicacao || 'Não foi possível localizar esse número em nenhum cartaz.';
     }
 
     iniciarJogo();
