@@ -106,9 +106,10 @@
       font-weight: bold;
     }
 
-    #resultado {
+    #resultadoFinal {
       margin-top: 1.5rem;
       font-size: 1.4rem;
+      text-align: center;
     }
 
     mark {
@@ -148,14 +149,14 @@
       <button class="nao" onclick="responder(false)">✖</button>
     </div>
 
+    <div id="resultadoFinal" class="oculto"></div>
+
     <div class="grupos">
       <div class="grupo" id="grupoSim"><strong>Número estava:</strong><div id="sim"></div></div>
       <div class="grupo" id="grupoNao"><strong>Número não estava:</strong><div id="nao"></div></div>
     </div>
 
     <button id="novoJogo" class="oculto" onclick="iniciarJogo()">Novo Jogo</button>
-
-    <div id="resultado"></div>
 
     <div id="feedbackSection" class="oculto">
       <p>Se você acha que houve um erro, digite o número que escolheu:</p>
@@ -191,16 +192,19 @@
       indiceAtual = 0;
       document.getElementById('sim').innerHTML = '';
       document.getElementById('nao').innerHTML = '';
-      document.getElementById('resultado').innerHTML = '';
+      document.getElementById('resultadoFinal').innerHTML = '';
+      document.getElementById('resultadoFinal').classList.add('oculto');
       document.getElementById('feedbackSection').classList.add('oculto');
       document.getElementById('novoJogo').classList.add('oculto');
+      document.getElementById('cartazAtual').classList.remove('oculto');
+      document.getElementById('botoesAcoes').classList.remove('oculto');
       gerarCartazes();
       mostrarCartaz();
     }
 
     function mostrarCartaz() {
       if (indiceAtual >= cartazes.length) {
-        calcularNumero();
+        finalizarJogo();
         return;
       }
       const div = document.getElementById('cartazAtual');
@@ -225,11 +229,21 @@
       mostrarCartaz();
     }
 
-    function calcularNumero() {
+    function finalizarJogo() {
       for (let i = 0; i < respostas.length; i++) {
         if (respostas[i]) numeroEscolhido += 1 << i;
       }
-      document.getElementById('resultado').innerHTML = `<h2>Seu número é <mark>${numeroEscolhido}</mark>!</h2>`;
+      
+      // Esconde o último cartão e os botões
+      document.getElementById('cartazAtual').classList.add('oculto');
+      document.getElementById('botoesAcoes').classList.add('oculto');
+      
+      // Mostra o resultado no lugar do cartão
+      const resultadoDiv = document.getElementById('resultadoFinal');
+      resultadoDiv.innerHTML = `<h2>O número que você escolheu é <mark>${numeroEscolhido}</mark>!</h2>`;
+      resultadoDiv.classList.remove('oculto');
+      
+      // Mostra os botões de feedback e novo jogo
       document.getElementById('novoJogo').classList.remove('oculto');
       document.getElementById('feedbackSection').classList.remove('oculto');
     }
