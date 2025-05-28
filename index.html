@@ -267,14 +267,14 @@
         return;
       }
 
-      let explicacao = '';
-      for (let i = 0; i < 6; i++) {
-        if ((numero >> i) & 1) {
-          explicacao += `O número ${numero} estava no Cartão ${nomesCartoes[i]}.\n`;
-        }
-      }
-      msg.textContent = explicacao || 'Esse número não apareceu em nenhum cartão.';
-    }
+let explicacao = '';
+for (let i = 0; i < 6; i++) {
+  if ((numero >> i) & 1) {
+    explicacao += `O número ${numero} estava no Cartão ${nomesCartoes[i]}.<br>`;
+  }
+}
+msg.innerHTML = explicacao || 'Esse número não apareceu em nenhum cartão.';
+}
 
     iniciarJogo();
   </script>
