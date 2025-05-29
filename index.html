@@ -144,7 +144,7 @@
 
   <h1 style="text-align: center;">Jogo da Adivinhação Numérica</h1>
   <p style="text-align: center; max-width: 600px; margin: 0 auto 20px;">
-    Pense em um número de 1 a 59 e observe os seis cartões que vao aparecer abaixo.
+    Pense em um número de 1 a 127 e observe os sete cartões que vao aparecer abaixo.
   </p>
 
     <p style="text-align: center; max-width: 800px; margin: 0 auto 40px;">
@@ -170,7 +170,7 @@
 
     <div id="feedbackSection" class="oculto">
       <p>Se você acha que houve um erro, digite o número que escolheu:</p>
-      <input type="number" min="1" max="59" id="feedbackInput">
+      <input type="number" min="1" max="127" id="feedbackInput">
       <button onclick="verificarFeedback()">Verificar</button>
       <div id="mensagemFeedback"></div>
     </div>
@@ -178,23 +178,23 @@
 
   <script>
     const cartazes = [];
-    const nomesCartoes = ['Azul', 'Vermelho', 'Verde', 'Amarelo', 'Roxo', 'Laranja'];
-    const coresCartoes = ['#bbdefb', '#ffcdd2', '#c8e6c9', '#fff9c4', '#e1bee7', '#ffe0b2'];
+    const nomesCartoes = ['Azul', 'Vermelho', 'Verde', 'Amarelo', 'Roxo', 'Laranja', 'Cinza']; 
+const coresCartoes = ['#bbdefb', '#ffcdd2', '#c8e6c9', '#fff9c4', '#e1bee7', '#ffe0b2', '#e0e0e0']; 
 
     let numeroEscolhido = 0;
     let respostas = [];
     let indiceAtual = 0;
 
-    function gerarCartazes() {
-      cartazes.length = 0;
-      for (let i = 0; i < 6; i++) {
-        let cartaz = [];
-        for (let j = 1; j <= 59; j++) {
-          if ((j >> i) & 1) cartaz.push(j);
-        }
-        cartazes.push(cartaz);
-      }
+function gerarCartazes() {
+  cartazes.length = 0;
+  for (let i = 0; i < 7; i++) { // Alterado de 6 para 7
+    let cartaz = [];
+    for (let j = 1; j <= 127; j++) { // Alterado de 59 para 127
+      if ((j >> i) & 1) cartaz.push(j);
     }
+    cartazes.push(cartaz);
+  }
+}
 
     function iniciarJogo() {
       numeroEscolhido = 0;
@@ -262,13 +262,13 @@
       const numero = parseInt(document.getElementById('feedbackInput').value);
       const msg = document.getElementById('mensagemFeedback');
 
-      if (isNaN(numero) || numero < 1 || numero > 59) {
-        msg.textContent = 'Por favor, digite um número válido entre 1 e 59.';
+      if (isNaN(numero) || numero < 1 || numero > 127) {
+        msg.textContent = 'Por favor, digite um número válido entre 1 e 127.';
         return;
       }
 
 let cartoesEncontrados = [];
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 7; i++) {
   if ((numero >> i) & 1) {
     cartoesEncontrados.push(nomesCartoes[i]);
   }
